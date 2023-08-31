@@ -491,17 +491,17 @@ export default class MacPackager extends PlatformPackager<MacConfiguration> {
       log.info({ reason: "`notarizeOptions` is explicitly set to false" }, "skipped macOS notarization")
       return
     }
-    const appleId = process.env.APPLE_ID
-    const appleIdPassword = process.env.APPLE_APP_SPECIFIC_PASSWORD
+    const appleId = notarizeOptions.appleId || process.env.APPLE_ID
+    const appleIdPassword = notarizeOptions.appleIdPassword || process.env.APPLE_APP_SPECIFIC_PASSWORD
     if (!appleId && !appleIdPassword) {
       // if no credentials provided, skip silently
       return
     }
     if (!appleId) {
-      throw new InvalidConfigurationError(`APPLE_ID env var needs to be set`)
+      throw new InvalidConfigurationError(`notarize.appleId needs to be provided or APPLE_ID env var needs to be set`)
     }
     if (!appleIdPassword) {
-      throw new InvalidConfigurationError(`APPLE_APP_SPECIFIC_PASSWORD env var needs to be set`)
+      throw new InvalidConfigurationError(`notarize.appleIdPassword needs to be provided or APPLE_APP_SPECIFIC_PASSWORD env var needs to be set`)
     }
     const options = this.generateNotarizeOptions(appPath, appleId, appleIdPassword)
     await notarize(options)
